@@ -1,0 +1,31 @@
+<div class="create-menu">
+    <div class="form">
+        <div class="form-item">
+            <label for="componentName">Name (also forms link)</label>
+            <input type="text" id="componentName" value="" placeholder="blog.a.entry == blog/a/entry">
+        </div>
+        <div class="form-item">
+            <label for="template">Template</label>
+            <select id="template">
+                <option value="blank">Blank</option>
+                <option value="blog-entry">Blog entry</option>
+            </select>
+        </div>
+        <div class="blog-entry-settings template-settings">
+            <div class="form-item">
+                <label for="blog-title">Title</label>
+                <input type="text" id="blog-title">
+            </div>
+            <div class="form-item">
+                <label for="blog-date">Date</label>
+                <input type="date" id="blog-date">
+            </div>
+            <div class="form-item">
+                <label for="blog-category">Category</label>
+                <input type="text" id="blog-category">
+            </div>
+        </div>
+        <button type="button" id="createFromInputs">Create</button>
+        <button type="button" id="back">Back</button>
+    </div>
+</div>

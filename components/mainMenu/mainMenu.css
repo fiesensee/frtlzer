@@ -1,0 +1,11 @@
+.main-menu-container {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+}
+
+.main-menu-container > h3 {
+    width: 100%;
+    margin-bottom: 10rem;
+}

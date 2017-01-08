@@ -1,0 +1,24 @@
+<table>
+    <thead>
+        <tr>
+            <th>Component Name</th>
+            <th>Template</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#components}}
+        <tr>
+            <td>{{componentName}}</td>
+            <td>{{template}}</td>
+            <td><div class="buttons group" id="{{componentName}}">
+                {{#isBlog}}
+                <button type="button" class="button edit">Edit</button>
+                {{/isBlog}}
+                <button type="button" class="button delete">Delete</button>
+            </div></td>
+        </tr>
+        {{/components}}
+    </tbody>
+</table>
+<button type="button" id="newComponent">Create new Component</button>
