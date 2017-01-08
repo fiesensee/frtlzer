@@ -1,0 +1,10 @@
+body{
+    width: 100vw;
+    height: 100vh;
+    padding-top: 5%;
+}
+
+#app {
+    width: 70%;
+    margin: auto;
+}
