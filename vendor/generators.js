@@ -13,18 +13,19 @@ class {{componentName}} extends Component {
     constructor(){
         super("{{componentName}}");
         this.template = template;
-        this.route = {{componentLink}};
+        this.route = "{{componentLink}}";
     }
     render(){
         return super.render()
     }
     addListeners(){
         $("#home").click(() => {
-            this.appInstance.renderComponent("home");
+            this.appInstance.renderComponent("Home");
         });
     }
 }
 export var {{componentName}}Component = new {{componentName}}();`
+        console.log(component.componentName);
         fs.writeFile(path + "/" + component.componentName + ".js", Mustache.render(jsTemplate, component), (err) => {
             resolve();
         })

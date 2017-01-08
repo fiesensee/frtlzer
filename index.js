@@ -5,13 +5,16 @@ window.$ = $;
 var kube = require("./vendor/kube.min");
 import {registerComponents} from "./appManager";
 
-var simpleGit = require("simple-git")();
+
 
 var appInstance = new App("app");
 registerComponents(appInstance);
 
 //try to create base folder
+console.log("making frtlzer folder");
 fs.mkdir(app.getPath("documents") + "/frtlzer", (err) => {
+    console.log(err);
+    var simpleGit = require("simple-git")(app.getPath("documents") + "/frtlzer");
     //if not already there, it's the first run, so set config
     if(!err){
         let emptyConfig = {"gitAuth": {"user": "", "password": ""}}
