@@ -1,6 +1,6 @@
 import $ from "../../vendor/jquery.min";
 import {Component} from "../../vendor/noManure";
-import {addBlogEntry, getComponentName} from "../../vendor/helper";
+import {addBlogEntry, getComponentName, getComponentRoute} from "../../vendor/helper";
 require("./createComponent.css")
 var template = require("./createComponent.html");
 class createComponent extends Component {
@@ -19,8 +19,8 @@ class createComponent extends Component {
         })
         $("#createFromInputs").click(() => {
             let newComponent = {
-                "componentLink": $("#componentName").val(),
-                "componentName": getComponentName($("#componentName").val())
+                "componentLink": getComponentRoute($("#componentLink").val()),
+                "componentName": getComponentName($("#componentLink").val())
             }
             if($("#template").val() === "blog-entry"){
                 newComponent.title = $("#blog-title").val();

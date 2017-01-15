@@ -3,12 +3,12 @@ const projectPath = app.getPath("documents") + "/frtlzer/wfs/";
 const simpleGit = require("simple-git")(app.getPath("documents") + "/frtlzer/wfs/");
 
 
-export function renderAllAndPush(){
+export function renderAllAndPush(pushMessage){
     return new Promise((resolve) => {
         renderComponents().then(() => {
             renderBlogFiles().then(() => {
                 simpleGit.add("./*")
-                    .commit("render commit")
+                    .commit(pushMessage)
                     .push("origin", "develop");
                     resolve();
             })

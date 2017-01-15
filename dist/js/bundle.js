@@ -63,7 +63,7 @@
 	console.log("making frtlzer folder");
 	fs.mkdir(app.getPath("documents") + "/frtlzer", function (err) {
 	    console.log(err);
-	    var simpleGit = __webpack_require__(24)(app.getPath("documents") + "/frtlzer");
+	    var simpleGit = __webpack_require__(18)(app.getPath("documents") + "/frtlzer");
 	    //if not already there, it's the first run, so set config
 	    if (!err) {
 	        var emptyConfig = { "gitAuth": { "user": "", "password": "" } };
@@ -77,7 +77,7 @@
 	                    if (err) {
 	                        simpleGit.clone("https://" + configs.gitAuth.user + ":" + configs.gitAuth.password + "@github.com/fiesensee/wfs.git", app.getPath("documents") + "/frtlzer/wfs/");
 	                    } else {
-	                        simpleGit = __webpack_require__(24)(app.getPath("documents") + "/frtlzer/wfs/");
+	                        simpleGit = __webpack_require__(18)(app.getPath("documents") + "/frtlzer/wfs/");
 	                        simpleGit.pull();
 	                    }
 	                });
@@ -2500,7 +2500,7 @@
 
 	var _componentOverview = __webpack_require__(15);
 
-	var _createComponent = __webpack_require__(19);
+	var _createComponent = __webpack_require__(40);
 
 	var _editArticle = __webpack_require__(44);
 
@@ -2611,7 +2611,7 @@
 
 
 	// module
-	exports.push([module.id, ".main-menu-container {\r\n    display: flex;\r\n    justify-content: center;\r\n    text-align: center;\r\n    flex-direction: column;\r\n}\r\n\r\n.main-menu-container > h3 {\r\n    width: 100%;\r\n    margin-bottom: 10rem;\r\n}", ""]);
+	exports.push([module.id, ".main-menu-container {\n    display: flex;\n    justify-content: center;\n    text-align: center;\n    flex-direction: column;\n}\n\n.main-menu-container > h3 {\n    width: 100%;\n    margin-bottom: 10rem;\n}", ""]);
 
 	// exports
 
@@ -2929,7 +2929,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var H = __webpack_require__(12);
-	module.exports = function() { var T = new H.Template({code: function (c,p,i) { var t=this;t.b(i=i||"");t.b("<div class=\"main-menu-container\">\r");t.b("\n" + i);t.b("    <h3>Frtlzer</h3>\r");t.b("\n" + i);t.b("    <button type=\"button\" id=\"showComponents\">Components</button>\r");t.b("\n" + i);t.b("</div>\r");t.b("\n");return t.fl(); },partials: {}, subs: {  }}, "<div class=\"main-menu-container\">\r\n    <h3>Frtlzer</h3>\r\n    <button type=\"button\" id=\"showComponents\">Components</button>\r\n</div>\r\n", H);return T.render.apply(T, arguments); };
+	module.exports = function() { var T = new H.Template({code: function (c,p,i) { var t=this;t.b(i=i||"");t.b("<div class=\"main-menu-container\">");t.b("\n" + i);t.b("    <h3>Frtlzer</h3>");t.b("\n" + i);t.b("    <button type=\"button\" id=\"showComponents\">Components</button>");t.b("\n" + i);t.b("</div>");t.b("\n");return t.fl(); },partials: {}, subs: {  }}, "<div class=\"main-menu-container\">\n    <h3>Frtlzer</h3>\n    <button type=\"button\" id=\"showComponents\">Components</button>\n</div>\n", H);return T.render.apply(T, arguments); };
 
 /***/ },
 /* 12 */
@@ -3755,6 +3755,10 @@
 
 	var _noManure = __webpack_require__(1);
 
+	var _renderers = __webpack_require__(16);
+
+	var _helper = __webpack_require__(35);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3763,8 +3767,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	__webpack_require__(16);
-	var template = __webpack_require__(18);
+	__webpack_require__(37);
+	var template = __webpack_require__(39);
 
 	var componentOverview = function (_Component) {
 	    _inherits(componentOverview, _Component);
@@ -3779,6 +3783,14 @@
 	    }
 
 	    _createClass(componentOverview, [{
+	        key: "getArticleForComponent",
+	        value: function getArticleForComponent(componentName) {
+	            var article = this.articles.find(function (arti) {
+	                return arti.componentName === componentName;
+	            });
+	            return article;
+	        }
+	    }, {
 	        key: "render",
 	        value: function render() {
 	            var _this2 = this;
@@ -3786,10 +3798,19 @@
 	            return new Promise(function (resolve) {
 	                _this2.confPath = app.getPath("documents") + "/frtlzer/wfs/configs/";
 	                var componentData = fs.readFileSync(_this2.confPath + "components.json", 'utf-8');
+	                var articleData = fs.readFileSync(_this2.confPath + "articles.json", 'utf-8');
+	                _this2.articles = JSON.parse(articleData).articles;
 	                _this2.components = JSON.parse(componentData).components;
 	                _this2.data = { "components": [] };
 	                for (var i = 0; i < _this2.components.length; i++) {
 	                    _this2.data.components.push(_this2.components[i]);
+	                    var article = _this2.getArticleForComponent(_this2.components[i].componentName);
+	                    console.log(article);
+	                    if (article) {
+	                        _this2.data.components[i].title = article.title;
+	                    } else {
+	                        _this2.data.components[i].title = _this2.components[i].componentName;
+	                    }
 	                    _this2.data.components[i].isBlog = false;
 	                    if (_this2.components[i].template === "blogEntry") {
 	                        _this2.data.components[i].isBlog = true;
@@ -3808,9 +3829,22 @@
 	                var componentIndex = _this3.components.findIndex(function (comp) {
 	                    return comp.componentName === (0, _jquery2.default)(e.currentTarget).parent().attr("id");
 	                });
-	                _this3.components.splice(componentIndex, 1);
-	                fs.writeFile(_this3.confPath + "components.json", JSON.stringify(_this3.components), function (err) {
-	                    _this3.appInstance.renderComponent("componentOverview");
+	                var deletedComp = _this3.components.splice(componentIndex, 1);
+	                var articleIndex = _this3.articles.findIndex(function (arti) {
+	                    return arti.componentName === (0, _jquery2.default)(e.currentTarget).parent().attr("id");
+	                });
+	                _this3.articles.splice(articleIndex, 1);
+	                fs.writeFile(_this3.confPath + "components.json", JSON.stringify({ "components": _this3.components }), function (err) {
+	                    fs.writeFile(_this3.confPath + "articles.json", JSON.stringify({ "articles": _this3.articles }), function (err) {
+	                        fs.rmdir(app.getPath("documents") + "/frtlzer/wfs/src/components/" + deletedComp[0].componentName, function (err) {
+	                            console.log(err);
+	                            (0, _helper.deleteRoute)(deletedComp).then(function () {
+	                                (0, _renderers.renderAllAndPush)("delete component " + deletedComp[0].componentName).then(function () {
+	                                    _this3.appInstance.renderComponent("componentOverview");
+	                                });
+	                            });
+	                        });
+	                    });
 	                });
 	            });
 	            (0, _jquery2.default)(".edit").click(function (e) {
@@ -3836,288 +3870,114 @@
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// style-loader: Adds some css to the DOM by adding a <style> tag
+	"use strict";
 
-	// load the styles
-	var content = __webpack_require__(17);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(10)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./componentOverview.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./componentOverview.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.renderAllAndPush = renderAllAndPush;
+	exports.renderComponents = renderComponents;
+	exports.renderBlogFiles = renderBlogFiles;
+	var Mustache = __webpack_require__(17);
+	var projectPath = app.getPath("documents") + "/frtlzer/wfs/";
+	var simpleGit = __webpack_require__(18)(app.getPath("documents") + "/frtlzer/wfs/");
+
+	function renderAllAndPush(pushMessage) {
+	    return new Promise(function (resolve) {
+	        renderComponents().then(function () {
+	            renderBlogFiles().then(function () {
+	                simpleGit.add("./*").commit(pushMessage).push("origin", "develop");
+	                resolve();
+	            });
+	        });
+	    });
 	}
 
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(9)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "", ""]);
-
-	// exports
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var H = __webpack_require__(12);
-	module.exports = function() { var T = new H.Template({code: function (c,p,i) { var t=this;t.b(i=i||"");t.b("<table>\r");t.b("\n" + i);t.b("    <thead>\r");t.b("\n" + i);t.b("        <tr>\r");t.b("\n" + i);t.b("            <th>Component Name</th>\r");t.b("\n" + i);t.b("            <th>Template</th>\r");t.b("\n" + i);t.b("            <th>Actions</th>\r");t.b("\n" + i);t.b("        </tr>\r");t.b("\n" + i);t.b("    </thead>\r");t.b("\n" + i);t.b("    <tbody>\r");t.b("\n" + i);if(t.s(t.f("components",c,p,1),c,p,0,199,614,"{{ }}")){t.rs(c,p,function(c,p,t){t.b("        <tr>\r");t.b("\n" + i);t.b("            <td>");t.b(t.v(t.f("componentName",c,p,0)));t.b("</td>\r");t.b("\n" + i);t.b("            <td>");t.b(t.v(t.f("template",c,p,0)));t.b("</td>\r");t.b("\n" + i);t.b("            <td><div class=\"buttons group\" id=\"");t.b(t.v(t.f("componentName",c,p,0)));t.b("\">\r");t.b("\n" + i);if(t.s(t.f("isBlog",c,p,1),c,p,0,385,476,"{{ }}")){t.rs(c,p,function(c,p,t){t.b("                <button type=\"button\" class=\"button edit\">Edit</button>\r");t.b("\n" + i);});c.pop();}t.b("                <button type=\"button\" class=\"button delete\">Delete</button>\r");t.b("\n" + i);t.b("            </div></td>\r");t.b("\n" + i);t.b("        </tr>\r");t.b("\n" + i);});c.pop();}t.b("    </tbody>\r");t.b("\n" + i);t.b("</table>\r");t.b("\n" + i);t.b("<button type=\"button\" id=\"newComponent\">Create new Component</button>");return t.fl(); },partials: {}, subs: {  }}, "<table>\r\n    <thead>\r\n        <tr>\r\n            <th>Component Name</th>\r\n            <th>Template</th>\r\n            <th>Actions</th>\r\n        </tr>\r\n    </thead>\r\n    <tbody>\r\n        {{#components}}\r\n        <tr>\r\n            <td>{{componentName}}</td>\r\n            <td>{{template}}</td>\r\n            <td><div class=\"buttons group\" id=\"{{componentName}}\">\r\n                {{#isBlog}}\r\n                <button type=\"button\" class=\"button edit\">Edit</button>\r\n                {{/isBlog}}\r\n                <button type=\"button\" class=\"button delete\">Delete</button>\r\n            </div></td>\r\n        </tr>\r\n        {{/components}}\r\n    </tbody>\r\n</table>\r\n<button type=\"button\" id=\"newComponent\">Create new Component</button>", H);return T.render.apply(T, arguments); };
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.createComponentComponent = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-	var _jquery = __webpack_require__(2);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _noManure = __webpack_require__(1);
-
-	var _helper = __webpack_require__(20);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	__webpack_require__(41);
-	var template = __webpack_require__(43);
-
-	var createComponent = function (_Component) {
-	    _inherits(createComponent, _Component);
-
-	    function createComponent() {
-	        _classCallCheck(this, createComponent);
-
-	        var _this = _possibleConstructorReturn(this, (createComponent.__proto__ || Object.getPrototypeOf(createComponent)).call(this, "createComponent"));
-
-	        _this.template = template;
-	        return _this;
-	    }
-
-	    _createClass(createComponent, [{
-	        key: "render",
-	        value: function render() {
-	            return _get(createComponent.prototype.__proto__ || Object.getPrototypeOf(createComponent.prototype), "render", this).call(this);
-	        }
-	    }, {
-	        key: "addListeners",
-	        value: function addListeners() {
-	            var _this2 = this;
-
-	            (0, _jquery2.default)("#template").change(function () {
-	                (0, _jquery2.default)(".template-settings").hide();
-	                var template = (0, _jquery2.default)("#template").children().filter(":selected").val();
-	                (0, _jquery2.default)("." + template + "-settings").show();
-	            });
-	            (0, _jquery2.default)("#createFromInputs").click(function () {
-	                var newComponent = {
-	                    "componentLink": (0, _jquery2.default)("#componentName").val(),
-	                    "componentName": (0, _helper.getComponentName)((0, _jquery2.default)("#componentName").val())
-	                };
-	                if ((0, _jquery2.default)("#template").val() === "blog-entry") {
-	                    (function () {
-	                        newComponent.title = (0, _jquery2.default)("#blog-title").val();
-	                        newComponent.date = (0, _jquery2.default)("#blog-date").val();
-	                        newComponent.category = (0, _jquery2.default)("#blog-category").val();
-	                        newComponent.published = false;
-	                        var props = { "componentName": newComponent.componentName };
-	                        (0, _helper.addBlogEntry)(newComponent).then(function () {
-	                            _this2.appInstance.renderComponent("editArticle", props);
-	                        });
-	                    })();
-	                }
-	            });
-	            (0, _jquery2.default)("#back").click(function () {
-	                _this2.appInstance.renderComponent("componentOverview");
-	            });
-	        }
-	    }]);
-
-	    return createComponent;
-	}(_noManure.Component);
-
-	var createComponentComponent = exports.createComponentComponent = new createComponent();
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.addBlogEntry = addBlogEntry;
-	exports.addComponent = addComponent;
-	exports.getComponentName = getComponentName;
-
-	var _generators = __webpack_require__(21);
-
-	var _renderers = __webpack_require__(23);
-
-	function addBlogEntry(blogEntry) {
-	    //blogentry needs componentName, title, date, category(maybe have a default) and published(should be false)
+	function renderComponents() {
 	    return new Promise(function (resolve) {
-	        addComponent(blogEntry, "blogEntry").then(function () {
-	            //add blog to articles.json
-	            console.log("reading articles.json");
-	            fs.readFile(app.getPath("documents") + "/frtlzer/wfs/configs/articles.json", 'utf-8', function (err, articleData) {
-	                var articles = JSON.parse(articleData);
-	                articles.articles.push(blogEntry);
-	                console.log("writing articles.json");
-	                fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/configs/articles.json", JSON.stringify(articles));
+	        renderRegistrations().then(function () {
+	            renderRoutes().then(function () {
+	                resolve();
 	            });
-	            //write the specific article.json data
-	            var newBlogData = { "title": blogEntry.title, "date": blogEntry.date, "text": "" };
-	            console.log("writing component.json");
-	            fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/src/components/" + blogEntry.componentName + "/" + blogEntry.componentName + ".json", JSON.stringify(newBlogData), function (err) {
-	                console.log(err);
-	                (0, _generators.generateBlogFiles)(blogEntry.componentName, newBlogData).then(function () {
-	                    (0, _renderers.renderAllAndPush)().then(resolve());
+	        });
+	    });
+	}
+
+	function renderRegistrations() {
+	    return new Promise(function (resolve) {
+	        console.log("rendering component registrations");
+	        fs.readFile(projectPath + "configs/components.json", 'utf-8', function (err, data) {
+	            var componentData = JSON.parse(data);
+	            var componentsTemplate = "{{#components}}\nimport { {{componentName}}Component } from \"./components/{{componentName}}/{{componentName}}\";\n{{/components}}\nexport function registerComponents(appInstance){\n    {{#components}}\n    appInstance.registerComponent({{componentName}}Component);\n    {{/components}}\n}";
+	            var components = Mustache.render(componentsTemplate, componentData);
+	            fs.writeFile(projectPath + "src/appManager.js", components, function () {
+	                resolve();
+	            });
+	        });
+	    });
+	}
+
+	function renderRoutes() {
+	    return new Promise(function (resolve) {
+	        console.log("rendering routes");
+	        fs.readFile(projectPath + "configs/routes.json", 'utf-8', function (err, data) {
+	            var routesData = JSON.parse(data);
+	            console.log(routesData);
+	            var routePartial = "{ \"name\": \"{{name}}\", \"path\": \"{{{path}}}\", \"children\":[\n    {{#children}}\n    {{> routePartial}}\n    {{/children}}\n] },";
+	            var routesTemplate = "export const routes = [\n    {{#routes}}\n    {{> routePartial}}\n    {{/routes}}\n]";
+	            var routes = Mustache.render(routesTemplate, routesData, { "routePartial": routePartial });
+	            console.log(routes);
+	            fs.writeFile(projectPath + "src/routes.js", routes, function () {
+	                resolve();
+	            });
+	        });
+	    });
+	}
+
+	function renderBlogFiles() {
+	    return new Promise(function (resolve) {
+	        fs.readFile(projectPath + "configs/articles.json", 'utf-8', function (err, data) {
+	            var articles = JSON.parse(data);
+	            renderArticles(articles).then(function () {
+	                renderBlogHtml(articles.articles, 0).then(function () {
+	                    resolve();
 	                });
 	            });
 	        });
 	    });
 	}
 
-	function addComponent(component) {
-	    var template = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "blank";
+	var blogHtmlTemplate = "<div class=\"blog-container\">\n<div class=\"blog-header\">\n    <div class=\"header-nav\">\n        <h3 class=\"nav-button\" id=\"home\">Heim</h3>\n        <h3 class=\"nav-button\">A</h3>\n        <h3 class=\"nav-button\">B</h3>\n        <h3 class=\"nav-button\">\xDCber</h3>\n    </div>\n    <div class=\"blog-logo\">\n        <h2>K</h2>\n    </div>\n</div>\n<div class=\"blog-content\">\n    <h3 class=\"date\">{{date}}</h3>\n    <h1 class=\"content-title\">{{title}}</h1>\n    <div class=\"blog-text\">\n        {{{text}}}\n    </div>\n</div>\n<div class=\"blog-next\">\n</div>\n</div>";
 
+	function renderBlogHtml(articles, index) {
 	    return new Promise(function (resolve) {
-	        //add component to components.json
-	        console.log("reading components.json");
-	        fs.readFile(app.getPath("documents") + "/frtlzer/wfs/configs/components.json", 'utf-8', function (err, componentData) {
-	            var components = JSON.parse(componentData);
-	            components.components.push({ "componentName": component.componentName, "template": template });
-	            console.log("writing components.json");
-	            fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/configs/components.json", JSON.stringify(components));
-	        });
-	        //add route to routes.json
-	        console.log("reading routes.json");
-	        fs.readFile(app.getPath("documents") + "/frtlzer/wfs/configs/routes.json", 'utf-8', function (err, routeData) {
-	            var routes = JSON.parse(routeData);
-	            var route = component.componentLink.split(".");
-	            setPath(route, routes.routes, 0);
-	            console.log("writing routes.json");
-	            fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/configs/routes.json", JSON.stringify(routes));
-	        });
-	        //create empty component skeleton
-	        (0, _generators.generateComponent)(component).then(function () {
-	            resolve();
+	        console.log("rendering blog article: " + articles[index].title);
+	        var article = articles[index];
+	        var articleData = fs.readFileSync(projectPath + "src/components/" + article.componentName + "/" + article.componentName + ".json");
+	        var blogHtml = Mustache.render(blogHtmlTemplate, JSON.parse(articleData));
+	        fs.writeFile(projectPath + "src/components/" + article.componentName + "/" + article.componentName + ".html", blogHtml, function (err) {
+	            if (index == articles.length - 1) {
+	                resolve();
+	            } else {
+	                resolve(renderBlogHtml(articles, index + 1));
+	            }
 	        });
 	    });
 	}
 
-	function setPath(newRoute, routes, level) {
-	    var targetRouteIndex = routes.findIndex(function (route) {
-	        return route.name === newRoute[level];
-	    });
-	    if (targetRouteIndex !== -1) {
-	        return setPath(newRoute, routes[targetRouteIndex].children, level + 1);
-	    } else {
-	        if (level === newRoute.length - 1) {
-	            var newEndpoint = {
-	                "name": newRoute[newRoute.length - 1], "path": "/" + newRoute[newRoute.length - 1], children: []
-	            };
-	            routes.push(newEndpoint);
-	            return 0;
-	        } else {
-	            var newNode = {
-	                "name": newRoute[level], "path": "/" + newRoute[level], children: []
-	            };
-	            routes.push(newNode);
-	            return setPath(newRoute, routes[routes.length - 1].children, level + 1);
-	        }
-	    }
-	}
-
-	function getComponentName(componentLink) {
-	    var linkParts = componentLink.split(".");
-	    for (var i = 0; i < linkParts.length; i++) {
-	        linkParts[i] = linkParts[i].charAt(0).toUpperCase() + linkParts[i].slice(1);
-	    }
-	    return linkParts.join("");
-	}
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.generateComponent = generateComponent;
-	exports.generateBlogFiles = generateBlogFiles;
-	exports.generateBlogCss = generateBlogCss;
-	var Mustache = __webpack_require__(22);
-	function generateComponent(component) {
+	function renderArticles(articles) {
 	    return new Promise(function (resolve) {
-	        console.log("generating component js");
-	        console.log(component);
-	        var path = app.getPath("documents") + "/frtlzer/wfs/src/components/" + component.componentName;
-	        fs.mkdir(path);
-	        var jsTemplate = "import $ from \"../../vendor/jquery.min\";\nimport {Component} from \"../../vendor/noManure\";\nrequire(\"./{{componentName}}.css\")\nvar template = require(\"./{{componentName}}.html\");\nclass {{componentName}} extends Component {\n    constructor(){\n        super(\"{{componentName}}\");\n        this.template = template;\n        this.route = \"{{componentLink}}\";\n    }\n    render(){\n        return super.render()\n    }\n    addListeners(){\n        $(\"#home\").click(() => {\n            this.appInstance.renderComponent(\"Home\");\n        });\n    }\n}\nexport var {{componentName}}Component = new {{componentName}}();";
-	        console.log(component.componentName);
-	        fs.writeFile(path + "/" + component.componentName + ".js", Mustache.render(jsTemplate, component), function (err) {
-	            resolve();
-	        });
-	    });
-	}
-
-	function generateBlogFiles(componentName, blogData) {
-	    return new Promise(function (resolve) {
-	        generateBlogCss(componentName).then(function () {
-	            resolve();
-	        });
-	    });
-	}
-
-	function generateBlogCss(componentName) {
-	    return new Promise(function (resolve) {
-	        console.log("generating blog css");
-	        var path = app.getPath("documents") + "/frtlzer/wfs/src/components/" + componentName;
-	        var cssTemplate = ".blog-container {\n    width: 100vw;\n    height: 100vh;\n}\n\n.blog-header {\n    display: flex;\n    flex-direction: row;\n    justify-content: space-between;\n    margin-left: 15%;\n    margin-right: 15%;\n    margin-bottom: 6rem;\n    \n}\n\n.header-nav {\n    display: inherit;\n    text-align: center;\n}\n\n.header-nav > * {\n    cursor: pointer;\n}\n\n.header-nav > h3 {\n    padding-top: 3rem;\n    width: 5rem;\n    margin-top: 0;\n    border-top: 3px solid white;\n    transition: all 0.3s;\n}\n\n.blog-logo {\n    padding-top: 3rem;\n}\n\n.blog-logo > h2 {\n    margin-top: 0px;\n}\n\n.header-nav > h3:hover {\n    border-top: 3px solid #cb450f;\n}\n\n.blog-content {\n    margin-right: 25%;\n    margin-left: 15%;\n    text-align: right;\n}\n\n.date{\n    text-align: left;\n}\n\n.content-title {\n    font-size: 60px;\n}\n\n.blog-text {\n    margin-left: 20%;\n    margin-right: 20%;\n    font-size: 20px;\n}";
-	        fs.writeFile(path + "/" + componentName + ".css", cssTemplate, function (err) {
+	        console.log("rendering blog articles");
+	        var articlesTemplate = "export const articles = {\n    \"articles\": [\n        {{#articles}}\n        { \"componentName\": \"{{componentName}}\", \"componentLink\": \"{{componentLink}}\",  \"title\": \"{{title}}\", \"category\": \"{{category}}\", \"published\": {{published}} },\n        {{/articles}}\n    ]\n}";
+	        var articlesText = Mustache.render(articlesTemplate, articles);
+	        fs.writeFile(projectPath + "src/articles.js", articlesText, function (err) {
 	            resolve();
 	        });
 	    });
 	}
 
 /***/ },
-/* 22 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -4753,125 +4613,15 @@
 
 
 /***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.renderAllAndPush = renderAllAndPush;
-	exports.renderComponents = renderComponents;
-	exports.renderBlogFiles = renderBlogFiles;
-	var Mustache = __webpack_require__(22);
-	var projectPath = app.getPath("documents") + "/frtlzer/wfs/";
-	var simpleGit = __webpack_require__(24)(app.getPath("documents") + "/frtlzer/wfs/");
-
-	function renderAllAndPush() {
-	    return new Promise(function (resolve) {
-	        renderComponents().then(function () {
-	            renderBlogFiles().then(function () {
-	                simpleGit.add("./*").commit("render commit").push("origin", "develop");
-	                resolve();
-	            });
-	        });
-	    });
-	}
-
-	function renderComponents() {
-	    return new Promise(function (resolve) {
-	        renderRegistrations().then(function () {
-	            renderRoutes().then(function () {
-	                resolve();
-	            });
-	        });
-	    });
-	}
-
-	function renderRegistrations() {
-	    return new Promise(function (resolve) {
-	        console.log("rendering component registrations");
-	        fs.readFile(projectPath + "configs/components.json", 'utf-8', function (err, data) {
-	            var componentData = JSON.parse(data);
-	            var componentsTemplate = "{{#components}}\nimport { {{componentName}}Component } from \"./components/{{componentName}}/{{componentName}}\";\n{{/components}}\nexport function registerComponents(appInstance){\n    {{#components}}\n    appInstance.registerComponent({{componentName}}Component);\n    {{/components}}\n}";
-	            var components = Mustache.render(componentsTemplate, componentData);
-	            fs.writeFile(projectPath + "src/appManager.js", components, function () {
-	                resolve();
-	            });
-	        });
-	    });
-	}
-
-	function renderRoutes() {
-	    return new Promise(function (resolve) {
-	        console.log("rendering routes");
-	        fs.readFile(projectPath + "configs/routes.json", 'utf-8', function (err, data) {
-	            var routesData = JSON.parse(data);
-	            console.log(routesData);
-	            var routePartial = "{ \"name\": \"{{name}}\", \"path\": \"{{{path}}}\", \"children\":[\n    {{#children}}\n    {{> routePartial}}\n    {{/children}}\n] },";
-	            var routesTemplate = "export const routes = [\n    {{#routes}}\n    {{> routePartial}}\n    {{/routes}}\n]";
-	            var routes = Mustache.render(routesTemplate, routesData, { "routePartial": routePartial });
-	            console.log(routes);
-	            fs.writeFile(projectPath + "src/routes.js", routes, function () {
-	                resolve();
-	            });
-	        });
-	    });
-	}
-
-	function renderBlogFiles() {
-	    return new Promise(function (resolve) {
-	        fs.readFile(projectPath + "configs/articles.json", 'utf-8', function (err, data) {
-	            var articles = JSON.parse(data);
-	            renderArticles(articles).then(function () {
-	                renderBlogHtml(articles.articles, 0).then(function () {
-	                    resolve();
-	                });
-	            });
-	        });
-	    });
-	}
-
-	var blogHtmlTemplate = "<div class=\"blog-container\">\n<div class=\"blog-header\">\n    <div class=\"header-nav\">\n        <h3 class=\"nav-button\" id=\"home\">Heim</h3>\n        <h3 class=\"nav-button\">A</h3>\n        <h3 class=\"nav-button\">B</h3>\n        <h3 class=\"nav-button\">\xDCber</h3>\n    </div>\n    <div class=\"blog-logo\">\n        <h2>K</h2>\n    </div>\n</div>\n<div class=\"blog-content\">\n    <h3 class=\"date\">{{date}}</h3>\n    <h1 class=\"content-title\">{{title}}</h1>\n    <div class=\"blog-text\">\n        {{{text}}}\n    </div>\n</div>\n<div class=\"blog-next\">\n</div>\n</div>";
-
-	function renderBlogHtml(articles, index) {
-	    return new Promise(function (resolve) {
-	        console.log("rendering blog article: " + articles[index].title);
-	        var article = articles[index];
-	        var articleData = fs.readFileSync(projectPath + "src/components/" + article.componentName + "/" + article.componentName + ".json");
-	        var blogHtml = Mustache.render(blogHtmlTemplate, JSON.parse(articleData));
-	        fs.writeFile(projectPath + "src/components/" + article.componentName + "/" + article.componentName + ".html", blogHtml, function (err) {
-	            if (index == articles.length - 1) {
-	                resolve();
-	            } else {
-	                resolve(renderBlogHtml(articles, index + 1));
-	            }
-	        });
-	    });
-	}
-
-	function renderArticles(articles) {
-	    return new Promise(function (resolve) {
-	        console.log("rendering blog articles");
-	        var articlesTemplate = "export const articles = {\n    \"articles\": [\n        {{#articles}}\n        { \"componentName\": \"{{componentName}}\", \"componentLink\": \"{{componentLink}}\",  \"title\": \"{{title}}\", \"category\": \"{{category}}\", \"published\": {{published}} },\n        {{/articles}}\n    ]\n}";
-	        var articlesText = Mustache.render(articlesTemplate, articles);
-	        fs.writeFile(projectPath + "src/articles.js", articlesText, function (err) {
-	            resolve();
-	        });
-	    });
-	}
-
-/***/ },
-/* 24 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var Git = __webpack_require__(25);
+	var Git = __webpack_require__(19);
 
-	var ChildProcess = __webpack_require__(37);
-	var Buffer = __webpack_require__(38).Buffer;
-	var exists = __webpack_require__(39);
+	var ChildProcess = __webpack_require__(31);
+	var Buffer = __webpack_require__(32).Buffer;
+	var exists = __webpack_require__(33);
 
 	module.exports = function (baseDir) {
 
@@ -4885,7 +4635,7 @@
 
 
 /***/ },
-/* 25 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function () {
@@ -5944,7 +5694,7 @@
 
 	      var fields = Object.keys(format);
 	      var formatstr = fields.map(function(k) { return format[k]; }).join(splitter);
-	      var command = ["log", "--pretty=format:" + formatstr + __webpack_require__(26).COMMIT_BOUNDARY];
+	      var command = ["log", "--pretty=format:" + formatstr + __webpack_require__(20).COMMIT_BOUNDARY];
 
 	      if (Array.isArray(opt)) {
 	         command = command.concat(opt);
@@ -6163,7 +5913,7 @@
 	            return;
 	         }
 
-	         var handler = __webpack_require__(27)("./" + type);
+	         var handler = __webpack_require__(21)("./" + type);
 	         var result = handler.parse.apply(handler, [data].concat(args === undefined ? [] : args));
 
 	         callback(null, result);
@@ -6178,7 +5928,7 @@
 
 
 /***/ },
-/* 26 */
+/* 20 */
 /***/ function(module, exports) {
 
 	
@@ -6238,30 +5988,30 @@
 
 
 /***/ },
-/* 27 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./BranchDeleteSummary": 28,
-		"./BranchDeleteSummary.js": 28,
-		"./BranchSummary": 29,
-		"./BranchSummary.js": 29,
-		"./CommitSummary": 30,
-		"./CommitSummary.js": 30,
-		"./DiffSummary": 31,
-		"./DiffSummary.js": 31,
-		"./FetchSummary": 32,
-		"./FetchSummary.js": 32,
-		"./FileStatusSummary": 33,
-		"./FileStatusSummary.js": 33,
-		"./ListLogSummary": 26,
-		"./ListLogSummary.js": 26,
-		"./PullSummary": 34,
-		"./PullSummary.js": 34,
-		"./StatusSummary": 35,
-		"./StatusSummary.js": 35,
-		"./TagList": 36,
-		"./TagList.js": 36
+		"./BranchDeleteSummary": 22,
+		"./BranchDeleteSummary.js": 22,
+		"./BranchSummary": 23,
+		"./BranchSummary.js": 23,
+		"./CommitSummary": 24,
+		"./CommitSummary.js": 24,
+		"./DiffSummary": 25,
+		"./DiffSummary.js": 25,
+		"./FetchSummary": 26,
+		"./FetchSummary.js": 26,
+		"./FileStatusSummary": 27,
+		"./FileStatusSummary.js": 27,
+		"./ListLogSummary": 20,
+		"./ListLogSummary.js": 20,
+		"./PullSummary": 28,
+		"./PullSummary.js": 28,
+		"./StatusSummary": 29,
+		"./StatusSummary.js": 29,
+		"./TagList": 30,
+		"./TagList.js": 30
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -6274,11 +6024,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 27;
+	webpackContext.id = 21;
 
 
 /***/ },
-/* 28 */
+/* 22 */
 /***/ function(module, exports) {
 
 	
@@ -6310,7 +6060,7 @@
 
 
 /***/ },
-/* 29 */
+/* 23 */
 /***/ function(module, exports) {
 
 	
@@ -6368,7 +6118,7 @@
 
 
 /***/ },
-/* 30 */
+/* 24 */
 /***/ function(module, exports) {
 
 	
@@ -6411,7 +6161,7 @@
 
 
 /***/ },
-/* 31 */
+/* 25 */
 /***/ function(module, exports) {
 
 	
@@ -6473,7 +6223,7 @@
 
 
 /***/ },
-/* 32 */
+/* 26 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -6534,7 +6284,7 @@
 
 
 /***/ },
-/* 33 */
+/* 27 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -6562,7 +6312,7 @@
 
 
 /***/ },
-/* 34 */
+/* 28 */
 /***/ function(module, exports) {
 
 	
@@ -6650,11 +6400,11 @@
 
 
 /***/ },
-/* 35 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var FileStatusSummary = __webpack_require__(33);
+	var FileStatusSummary = __webpack_require__(27);
 
 	module.exports = StatusSummary;
 
@@ -6799,7 +6549,7 @@
 
 
 /***/ },
-/* 36 */
+/* 30 */
 /***/ function(module, exports) {
 
 	
@@ -6852,23 +6602,23 @@
 
 
 /***/ },
-/* 37 */
+/* 31 */
 /***/ function(module, exports) {
 
 	module.exports = require("child_process");
 
 /***/ },
-/* 38 */
+/* 32 */
 /***/ function(module, exports) {
 
 	module.exports = require("buffer");
 
 /***/ },
-/* 39 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var fs = __webpack_require__(40);
+	var fs = __webpack_require__(34);
 
 	function exists (path, isFile, isDirectory) {
 	   try {
@@ -6903,10 +6653,321 @@
 
 
 /***/ },
-/* 40 */
+/* 34 */
 /***/ function(module, exports) {
 
 	module.exports = require("fs");
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.addBlogEntry = addBlogEntry;
+	exports.addComponent = addComponent;
+	exports.getComponentName = getComponentName;
+	exports.getComponentRoute = getComponentRoute;
+	exports.deleteRoute = deleteRoute;
+
+	var _generators = __webpack_require__(36);
+
+	var _renderers = __webpack_require__(16);
+
+	function addBlogEntry(blogEntry) {
+	    //blogentry needs componentName, title, date, category(maybe have a default) and published(should be false)
+	    return new Promise(function (resolve) {
+	        addComponent(blogEntry, "blogEntry").then(function () {
+	            //add blog to articles.json
+	            console.log("reading articles.json");
+	            fs.readFile(app.getPath("documents") + "/frtlzer/wfs/configs/articles.json", 'utf-8', function (err, articleData) {
+	                var articles = JSON.parse(articleData);
+	                articles.articles.push(blogEntry);
+	                console.log("writing articles.json");
+	                fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/configs/articles.json", JSON.stringify(articles));
+	            });
+	            //write the specific article.json data
+	            var newBlogData = { "title": blogEntry.title, "date": blogEntry.date, "text": "" };
+	            console.log("writing component.json");
+	            fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/src/components/" + blogEntry.componentName + "/" + blogEntry.componentName + ".json", JSON.stringify(newBlogData), function (err) {
+	                console.log(err);
+	                (0, _generators.generateBlogFiles)(blogEntry.componentName, newBlogData).then(function () {
+	                    (0, _renderers.renderAllAndPush)("adding blog entry " + blogEntry.componentName).then(resolve());
+	                });
+	            });
+	        });
+	    });
+	}
+
+	function addComponent(component) {
+	    var template = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "blank";
+
+	    return new Promise(function (resolve) {
+	        //add component to components.json
+	        console.log("reading components.json");
+	        fs.readFile(app.getPath("documents") + "/frtlzer/wfs/configs/components.json", 'utf-8', function (err, componentData) {
+	            var components = JSON.parse(componentData);
+	            components.components.push({ "componentName": component.componentName, "template": template });
+	            console.log("writing components.json");
+	            fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/configs/components.json", JSON.stringify(components));
+	        });
+	        //add route to routes.json
+	        console.log("reading routes.json");
+	        fs.readFile(app.getPath("documents") + "/frtlzer/wfs/configs/routes.json", 'utf-8', function (err, routeData) {
+	            var routes = JSON.parse(routeData);
+	            var route = component.componentLink.split(".");
+	            setPath(route, routes.routes, 0);
+	            console.log("writing routes.json");
+	            fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/configs/routes.json", JSON.stringify(routes));
+	        });
+	        //create empty component skeleton
+	        (0, _generators.generateComponent)(component).then(function () {
+	            resolve();
+	        });
+	    });
+	}
+
+	function setPath(newRoute, routes, level) {
+	    var targetRouteIndex = routes.findIndex(function (route) {
+	        return route.name === newRoute[level];
+	    });
+	    if (targetRouteIndex !== -1) {
+	        return setPath(newRoute, routes[targetRouteIndex].children, level + 1);
+	    } else {
+	        if (level === newRoute.length - 1) {
+	            var newEndpoint = {
+	                "name": newRoute[newRoute.length - 1], "path": "/" + newRoute[newRoute.length - 1], children: []
+	            };
+	            routes.push(newEndpoint);
+	            return 0;
+	        } else {
+	            var newNode = {
+	                "name": newRoute[level], "path": "/" + newRoute[level], children: []
+	            };
+	            routes.push(newNode);
+	            return setPath(newRoute, routes[routes.length - 1].children, level + 1);
+	        }
+	    }
+	}
+
+	function getComponentName(componentLink) {
+	    return replaceAndCamelCase(replaceAndCamelCase(componentLink, "/"), "-");
+	}
+
+	function getComponentRoute(componentLink) {
+	    return componentLink.replace(/\//g, ".");
+	}
+
+	function replaceAndCamelCase(text, token) {
+	    var textParts = text.split(token);
+	    for (var i = 0; i < textParts.length; i++) {
+	        textParts[i] = textParts[i].charAt(0).toUpperCase() + textParts[i].slice(1);
+	    }
+	    return textParts.join("");
+	}
+
+	function deleteRoute(component) {
+	    var linkParts = component.componentLink.split(".");
+	    var routeIndices = [];
+	    var routes = fs.readFileSync(app.getPath("documents") + "/frtlzer/wfs/configs/routes.json", 'utf-8');
+	    // for(var i = 0; i < linkParts.length; i++){
+	    //     let routeIndex = routes.findIndex((route) => {
+	    //         return route.name === linkParts[i];
+	    //     })
+	    //     routeIndices.push(routeIndex);
+	    // let routePart = routes[routeIndices[0]];
+	    // for(var i = 0; i < routeIndices.length; i++){
+	    //     for(var j = 0; i < linkParts.length; j++){
+
+	    //     }
+	    // }
+	}
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.generateComponent = generateComponent;
+	exports.generateBlogFiles = generateBlogFiles;
+	exports.generateBlogCss = generateBlogCss;
+	var Mustache = __webpack_require__(17);
+	function generateComponent(component) {
+	    return new Promise(function (resolve) {
+	        console.log("generating component js");
+	        console.log(component);
+	        var path = app.getPath("documents") + "/frtlzer/wfs/src/components/" + component.componentName;
+	        fs.mkdir(path);
+	        var jsTemplate = "import $ from \"../../vendor/jquery.min\";\nimport {Component} from \"../../vendor/noManure\";\nrequire(\"./{{componentName}}.css\")\nvar template = require(\"./{{componentName}}.html\");\nclass {{componentName}} extends Component {\n    constructor(){\n        super(\"{{componentName}}\");\n        this.template = template;\n        this.route = \"{{componentLink}}\";\n    }\n    render(){\n        return super.render()\n    }\n    addListeners(){\n        $(\"#home\").click(() => {\n            this.appInstance.renderComponent(\"Home\");\n        });\n    }\n}\nexport var {{componentName}}Component = new {{componentName}}();";
+	        console.log(component.componentName);
+	        fs.writeFile(path + "/" + component.componentName + ".js", Mustache.render(jsTemplate, component), function (err) {
+	            resolve();
+	        });
+	    });
+	}
+
+	function generateBlogFiles(componentName, blogData) {
+	    return new Promise(function (resolve) {
+	        generateBlogCss(componentName).then(function () {
+	            resolve();
+	        });
+	    });
+	}
+
+	function generateBlogCss(componentName) {
+	    return new Promise(function (resolve) {
+	        console.log("generating blog css");
+	        var path = app.getPath("documents") + "/frtlzer/wfs/src/components/" + componentName;
+	        var cssTemplate = ".blog-container {\n    width: 100vw;\n    height: 100vh;\n}\n\n.blog-header {\n    display: flex;\n    flex-direction: row;\n    justify-content: space-between;\n    margin-left: 15%;\n    margin-right: 15%;\n    margin-bottom: 6rem;\n    \n}\n\n.header-nav {\n    display: inherit;\n    text-align: center;\n}\n\n.header-nav > * {\n    cursor: pointer;\n}\n\n.header-nav > h3 {\n    padding-top: 3rem;\n    width: 5rem;\n    margin-top: 0;\n    border-top: 3px solid white;\n    transition: all 0.3s;\n}\n\n.blog-logo {\n    padding-top: 3rem;\n}\n\n.blog-logo > h2 {\n    margin-top: 0px;\n}\n\n.header-nav > h3:hover {\n    border-top: 3px solid #cb450f;\n}\n\n.blog-content {\n    margin-right: 25%;\n    margin-left: 15%;\n    text-align: right;\n}\n\n.date{\n    text-align: left;\n}\n\n.content-title {\n    font-size: 60px;\n}\n\n.blog-text {\n    margin-left: 20%;\n    margin-right: 20%;\n    font-size: 20px;\n}";
+	        fs.writeFile(path + "/" + componentName + ".css", cssTemplate, function (err) {
+	            resolve();
+	        });
+	    });
+	}
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(38);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(10)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./componentOverview.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./componentOverview.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(9)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "", ""]);
+
+	// exports
+
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var H = __webpack_require__(12);
+	module.exports = function() { var T = new H.Template({code: function (c,p,i) { var t=this;t.b(i=i||"");t.b("<table>");t.b("\n" + i);t.b("    <thead>");t.b("\n" + i);t.b("        <tr>");t.b("\n" + i);t.b("            <th>Title</th>");t.b("\n" + i);t.b("            <th>Template</th>");t.b("\n" + i);t.b("            <th></th>");t.b("\n" + i);t.b("            <th>Actions</th>");t.b("\n" + i);t.b("        </tr>");t.b("\n" + i);t.b("    </thead>");t.b("\n" + i);t.b("    <tbody>");t.b("\n" + i);if(t.s(t.f("components",c,p,1),c,p,0,203,599,"{{ }}")){t.rs(c,p,function(c,p,t){t.b("        <tr>");t.b("\n" + i);t.b("            <td>");t.b(t.v(t.f("title",c,p,0)));t.b("</td>");t.b("\n" + i);t.b("            <td>");t.b(t.v(t.f("template",c,p,0)));t.b("</td>");t.b("\n" + i);t.b("            <td><div class=\"buttons group\" id=\"");t.b(t.v(t.f("componentName",c,p,0)));t.b("\">");t.b("\n" + i);if(t.s(t.f("isBlog",c,p,1),c,p,0,376,465,"{{ }}")){t.rs(c,p,function(c,p,t){t.b("                <button type=\"button\" class=\"button edit\">Edit</button>");t.b("\n" + i);});c.pop();}t.b("                <button type=\"button\" class=\"button delete\">Delete</button>");t.b("\n" + i);t.b("            </div></td>");t.b("\n" + i);t.b("        </tr>");t.b("\n" + i);});c.pop();}t.b("    </tbody>");t.b("\n" + i);t.b("</table>");t.b("\n" + i);t.b("<button type=\"button\" id=\"newComponent\">Create new Component</button>");return t.fl(); },partials: {}, subs: {  }}, "<table>\n    <thead>\n        <tr>\n            <th>Title</th>\n            <th>Template</th>\n            <th></th>\n            <th>Actions</th>\n        </tr>\n    </thead>\n    <tbody>\n        {{#components}}\n        <tr>\n            <td>{{title}}</td>\n            <td>{{template}}</td>\n            <td><div class=\"buttons group\" id=\"{{componentName}}\">\n                {{#isBlog}}\n                <button type=\"button\" class=\"button edit\">Edit</button>\n                {{/isBlog}}\n                <button type=\"button\" class=\"button delete\">Delete</button>\n            </div></td>\n        </tr>\n        {{/components}}\n    </tbody>\n</table>\n<button type=\"button\" id=\"newComponent\">Create new Component</button>", H);return T.render.apply(T, arguments); };
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createComponentComponent = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _noManure = __webpack_require__(1);
+
+	var _helper = __webpack_require__(35);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	__webpack_require__(41);
+	var template = __webpack_require__(43);
+
+	var createComponent = function (_Component) {
+	    _inherits(createComponent, _Component);
+
+	    function createComponent() {
+	        _classCallCheck(this, createComponent);
+
+	        var _this = _possibleConstructorReturn(this, (createComponent.__proto__ || Object.getPrototypeOf(createComponent)).call(this, "createComponent"));
+
+	        _this.template = template;
+	        return _this;
+	    }
+
+	    _createClass(createComponent, [{
+	        key: "render",
+	        value: function render() {
+	            return _get(createComponent.prototype.__proto__ || Object.getPrototypeOf(createComponent.prototype), "render", this).call(this);
+	        }
+	    }, {
+	        key: "addListeners",
+	        value: function addListeners() {
+	            var _this2 = this;
+
+	            (0, _jquery2.default)("#template").change(function () {
+	                (0, _jquery2.default)(".template-settings").hide();
+	                var template = (0, _jquery2.default)("#template").children().filter(":selected").val();
+	                (0, _jquery2.default)("." + template + "-settings").show();
+	            });
+	            (0, _jquery2.default)("#createFromInputs").click(function () {
+	                var newComponent = {
+	                    "componentLink": (0, _helper.getComponentRoute)((0, _jquery2.default)("#componentLink").val()),
+	                    "componentName": (0, _helper.getComponentName)((0, _jquery2.default)("#componentLink").val())
+	                };
+	                if ((0, _jquery2.default)("#template").val() === "blog-entry") {
+	                    (function () {
+	                        newComponent.title = (0, _jquery2.default)("#blog-title").val();
+	                        newComponent.date = (0, _jquery2.default)("#blog-date").val();
+	                        newComponent.category = (0, _jquery2.default)("#blog-category").val();
+	                        newComponent.published = false;
+	                        var props = { "componentName": newComponent.componentName };
+	                        (0, _helper.addBlogEntry)(newComponent).then(function () {
+	                            _this2.appInstance.renderComponent("editArticle", props);
+	                        });
+	                    })();
+	                }
+	            });
+	            (0, _jquery2.default)("#back").click(function () {
+	                _this2.appInstance.renderComponent("componentOverview");
+	            });
+	        }
+	    }]);
+
+	    return createComponent;
+	}(_noManure.Component);
+
+	var createComponentComponent = exports.createComponentComponent = new createComponent();
 
 /***/ },
 /* 41 */
@@ -6943,7 +7004,7 @@
 
 
 	// module
-	exports.push([module.id, ".template-settings {\r\n    display: none;\r\n}", ""]);
+	exports.push([module.id, ".template-settings {\n    display: none;\n}", ""]);
 
 	// exports
 
@@ -6953,7 +7014,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var H = __webpack_require__(12);
-	module.exports = function() { var T = new H.Template({code: function (c,p,i) { var t=this;t.b(i=i||"");t.b("<div class=\"create-menu\">\r");t.b("\n" + i);t.b("    <div class=\"form\">\r");t.b("\n" + i);t.b("        <div class=\"form-item\">\r");t.b("\n" + i);t.b("            <label for=\"componentName\">Name (also forms link)</label>\r");t.b("\n" + i);t.b("            <input type=\"text\" id=\"componentName\" value=\"\" placeholder=\"blog.a.entry == blog/a/entry\">\r");t.b("\n" + i);t.b("        </div>\r");t.b("\n" + i);t.b("        <div class=\"form-item\">\r");t.b("\n" + i);t.b("            <label for=\"template\">Template</label>\r");t.b("\n" + i);t.b("            <select id=\"template\">\r");t.b("\n" + i);t.b("                <option value=\"blank\">Blank</option>\r");t.b("\n" + i);t.b("                <option value=\"blog-entry\">Blog entry</option>\r");t.b("\n" + i);t.b("            </select>\r");t.b("\n" + i);t.b("        </div>\r");t.b("\n" + i);t.b("        <div class=\"blog-entry-settings template-settings\">\r");t.b("\n" + i);t.b("            <div class=\"form-item\">\r");t.b("\n" + i);t.b("                <label for=\"blog-title\">Title</label>\r");t.b("\n" + i);t.b("                <input type=\"text\" id=\"blog-title\">\r");t.b("\n" + i);t.b("            </div>\r");t.b("\n" + i);t.b("            <div class=\"form-item\">\r");t.b("\n" + i);t.b("                <label for=\"blog-date\">Date</label>\r");t.b("\n" + i);t.b("                <input type=\"date\" id=\"blog-date\">\r");t.b("\n" + i);t.b("            </div>\r");t.b("\n" + i);t.b("            <div class=\"form-item\">\r");t.b("\n" + i);t.b("                <label for=\"blog-category\">Category</label>\r");t.b("\n" + i);t.b("                <input type=\"text\" id=\"blog-category\">\r");t.b("\n" + i);t.b("            </div>\r");t.b("\n" + i);t.b("        </div>\r");t.b("\n" + i);t.b("        <button type=\"button\" id=\"createFromInputs\">Create</button>\r");t.b("\n" + i);t.b("        <button type=\"button\" id=\"back\">Back</button>\r");t.b("\n" + i);t.b("    </div>\r");t.b("\n" + i);t.b("</div>");return t.fl(); },partials: {}, subs: {  }}, "<div class=\"create-menu\">\r\n    <div class=\"form\">\r\n        <div class=\"form-item\">\r\n            <label for=\"componentName\">Name (also forms link)</label>\r\n            <input type=\"text\" id=\"componentName\" value=\"\" placeholder=\"blog.a.entry == blog/a/entry\">\r\n        </div>\r\n        <div class=\"form-item\">\r\n            <label for=\"template\">Template</label>\r\n            <select id=\"template\">\r\n                <option value=\"blank\">Blank</option>\r\n                <option value=\"blog-entry\">Blog entry</option>\r\n            </select>\r\n        </div>\r\n        <div class=\"blog-entry-settings template-settings\">\r\n            <div class=\"form-item\">\r\n                <label for=\"blog-title\">Title</label>\r\n                <input type=\"text\" id=\"blog-title\">\r\n            </div>\r\n            <div class=\"form-item\">\r\n                <label for=\"blog-date\">Date</label>\r\n                <input type=\"date\" id=\"blog-date\">\r\n            </div>\r\n            <div class=\"form-item\">\r\n                <label for=\"blog-category\">Category</label>\r\n                <input type=\"text\" id=\"blog-category\">\r\n            </div>\r\n        </div>\r\n        <button type=\"button\" id=\"createFromInputs\">Create</button>\r\n        <button type=\"button\" id=\"back\">Back</button>\r\n    </div>\r\n</div>", H);return T.render.apply(T, arguments); };
+	module.exports = function() { var T = new H.Template({code: function (c,p,i) { var t=this;t.b(i=i||"");t.b("<div class=\"create-menu\">");t.b("\n" + i);t.b("    <div class=\"form\">");t.b("\n" + i);t.b("        <div class=\"form-item\">");t.b("\n" + i);t.b("            <label for=\"componentLink\">Link to page</label>");t.b("\n" + i);t.b("            <input type=\"text\" id=\"componentLink\" value=\"\" placeholder=\"blog/a/entry\">");t.b("\n" + i);t.b("        </div>");t.b("\n" + i);t.b("        <div class=\"form-item\">");t.b("\n" + i);t.b("            <label for=\"template\">Template</label>");t.b("\n" + i);t.b("            <select id=\"template\">");t.b("\n" + i);t.b("                <option value=\"blank\">Blank</option>");t.b("\n" + i);t.b("                <option value=\"blog-entry\">Blog entry</option>");t.b("\n" + i);t.b("            </select>");t.b("\n" + i);t.b("        </div>");t.b("\n" + i);t.b("        <div class=\"blog-entry-settings template-settings\">");t.b("\n" + i);t.b("            <div class=\"form-item\">");t.b("\n" + i);t.b("                <label for=\"blog-title\">Title</label>");t.b("\n" + i);t.b("                <input type=\"text\" id=\"blog-title\">");t.b("\n" + i);t.b("            </div>");t.b("\n" + i);t.b("            <div class=\"form-item\">");t.b("\n" + i);t.b("                <label for=\"blog-date\">Date</label>");t.b("\n" + i);t.b("                <input type=\"date\" id=\"blog-date\">");t.b("\n" + i);t.b("            </div>");t.b("\n" + i);t.b("            <div class=\"form-item\">");t.b("\n" + i);t.b("                <label for=\"blog-category\">Category</label>");t.b("\n" + i);t.b("                <input type=\"text\" id=\"blog-category\">");t.b("\n" + i);t.b("            </div>");t.b("\n" + i);t.b("        </div>");t.b("\n" + i);t.b("        <button type=\"button\" id=\"createFromInputs\">Create</button>");t.b("\n" + i);t.b("        <button type=\"button\" id=\"back\">Back</button>");t.b("\n" + i);t.b("    </div>");t.b("\n" + i);t.b("</div>");return t.fl(); },partials: {}, subs: {  }}, "<div class=\"create-menu\">\n    <div class=\"form\">\n        <div class=\"form-item\">\n            <label for=\"componentLink\">Link to page</label>\n            <input type=\"text\" id=\"componentLink\" value=\"\" placeholder=\"blog/a/entry\">\n        </div>\n        <div class=\"form-item\">\n            <label for=\"template\">Template</label>\n            <select id=\"template\">\n                <option value=\"blank\">Blank</option>\n                <option value=\"blog-entry\">Blog entry</option>\n            </select>\n        </div>\n        <div class=\"blog-entry-settings template-settings\">\n            <div class=\"form-item\">\n                <label for=\"blog-title\">Title</label>\n                <input type=\"text\" id=\"blog-title\">\n            </div>\n            <div class=\"form-item\">\n                <label for=\"blog-date\">Date</label>\n                <input type=\"date\" id=\"blog-date\">\n            </div>\n            <div class=\"form-item\">\n                <label for=\"blog-category\">Category</label>\n                <input type=\"text\" id=\"blog-category\">\n            </div>\n        </div>\n        <button type=\"button\" id=\"createFromInputs\">Create</button>\n        <button type=\"button\" id=\"back\">Back</button>\n    </div>\n</div>", H);return T.render.apply(T, arguments); };
 
 /***/ },
 /* 44 */
@@ -6976,7 +7037,7 @@
 
 	var _noManure = __webpack_require__(1);
 
-	var _renderers = __webpack_require__(23);
+	var _renderers = __webpack_require__(16);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6987,7 +7048,7 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	__webpack_require__(45);
-	var simplegit = __webpack_require__(24)(app.getPath("documents") + "/frtlzer/wfs/");
+	var simplegit = __webpack_require__(18)(app.getPath("documents") + "/frtlzer/wfs/");
 	var Quill = __webpack_require__(47);
 	var template = __webpack_require__(48);
 
@@ -7060,7 +7121,7 @@
 	                    articles.articles[articleIndex].published = _this3.articleData.published;
 	                    fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/configs/articles.json", JSON.stringify(articles), function (err) {
 	                        fs.writeFile(_this3.articlePath, JSON.stringify(_this3.articleData), function (err) {
-	                            (0, _renderers.renderAllAndPush)().then(function () {
+	                            (0, _renderers.renderAllAndPush)("edit article " + articles.articles[articleIndex].title).then(function () {
 	                                _this3.appInstance.renderComponent("componentOverview");
 	                            });
 	                        });
@@ -7110,7 +7171,7 @@
 
 
 	// module
-	exports.push([module.id, ".editor-container {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    width: 100%;\r\n    height: 70vh;\r\n    text-align: center;\r\n}\r\n\r\n.article-meta-data {\r\n    display: block;\r\n}\r\n\r\n.ql-toolbar > * >  button {\r\n    min-height: 0px;\r\n}\r\n\r\n.ql-toolbar > * >  button:hover {\r\n    box-shadow: none;\r\n}\r\n\r\n.editor-actions {\r\n    margin-top: 4rem;\r\n}", ""]);
+	exports.push([module.id, ".editor-container {\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    width: 100%;\n    height: 70vh;\n    text-align: center;\n}\n\n.article-meta-data {\n    display: block;\n}\n\n.ql-toolbar > * >  button {\n    min-height: 0px;\n}\n\n.ql-toolbar > * >  button:hover {\n    box-shadow: none;\n}\n\n.editor-actions {\n    margin-top: 4rem;\n}", ""]);
 
 	// exports
 
@@ -17701,7 +17762,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var H = __webpack_require__(12);
-	module.exports = function() { var T = new H.Template({code: function (c,p,i) { var t=this;t.b(i=i||"");t.b("<div class=\"article-meta-data\">\r");t.b("\n" + i);t.b("    <form class=\"form\">\r");t.b("\n" + i);t.b("        <div class=\"form-item\">\r");t.b("\n" + i);t.b("            <label for=\"article-title\">Title</label>\r");t.b("\n" + i);t.b("            <input type=\"text\" id=\"article-title\" value=\"");t.b(t.v(t.f("title",c,p,0)));t.b("\">\r");t.b("\n" + i);t.b("        </div>\r");t.b("\n" + i);t.b("        <div class=\"form-item\">\r");t.b("\n" + i);t.b("            <label for=\"article-date\">Date</label>\r");t.b("\n" + i);t.b("            <input type=\"date\" id=\"article-date\" value=\"");t.b(t.v(t.f("date",c,p,0)));t.b("\">\r");t.b("\n" + i);t.b("        </div>        \r");t.b("\n" + i);t.b("    </form>\r");t.b("\n" + i);t.b("</div>\r");t.b("\n" + i);t.b("<div class=\"editor-container\">\r");t.b("\n" + i);t.b("    <div id=\"toolbar\">\r");t.b("\n" + i);t.b("\r");t.b("\n" + i);t.b("    </div>\r");t.b("\n" + i);t.b("    <div id=\"editor\">\r");t.b("\n" + i);t.b("        \r");t.b("\n" + i);t.b("    </div>\r");t.b("\n" + i);t.b("</div>\r");t.b("\n" + i);t.b("<div class=\"editor-actions\">\r");t.b("\n" + i);t.b("    <form action=\"\" class=\"form\">\r");t.b("\n" + i);t.b("        <div class=\"form-item\">\r");t.b("\n" + i);t.b("            <input type=\"checkbox\" id=\"published\" value=\"\">\r");t.b("\n" + i);t.b("            <label for=\"published\">Published</label>\r");t.b("\n" + i);t.b("        </div>\r");t.b("\n" + i);t.b("        <br>\r");t.b("\n" + i);t.b("        <button type=\"button\" id=\"save\">Save</button>\r");t.b("\n" + i);t.b("        <button type=\"button\" id=\"back\">Back</button>\r");t.b("\n" + i);t.b("    </form>\r");t.b("\n" + i);t.b("</div>");return t.fl(); },partials: {}, subs: {  }}, "<div class=\"article-meta-data\">\r\n    <form class=\"form\">\r\n        <div class=\"form-item\">\r\n            <label for=\"article-title\">Title</label>\r\n            <input type=\"text\" id=\"article-title\" value=\"{{title}}\">\r\n        </div>\r\n        <div class=\"form-item\">\r\n            <label for=\"article-date\">Date</label>\r\n            <input type=\"date\" id=\"article-date\" value=\"{{date}}\">\r\n        </div>        \r\n    </form>\r\n</div>\r\n<div class=\"editor-container\">\r\n    <div id=\"toolbar\">\r\n\r\n    </div>\r\n    <div id=\"editor\">\r\n        \r\n    </div>\r\n</div>\r\n<div class=\"editor-actions\">\r\n    <form action=\"\" class=\"form\">\r\n        <div class=\"form-item\">\r\n            <input type=\"checkbox\" id=\"published\" value=\"\">\r\n            <label for=\"published\">Published</label>\r\n        </div>\r\n        <br>\r\n        <button type=\"button\" id=\"save\">Save</button>\r\n        <button type=\"button\" id=\"back\">Back</button>\r\n    </form>\r\n</div>", H);return T.render.apply(T, arguments); };
+	module.exports = function() { var T = new H.Template({code: function (c,p,i) { var t=this;t.b(i=i||"");t.b("<div class=\"article-meta-data\">");t.b("\n" + i);t.b("    <form class=\"form\">");t.b("\n" + i);t.b("        <div class=\"form-item\">");t.b("\n" + i);t.b("            <label for=\"article-title\">Title</label>");t.b("\n" + i);t.b("            <input type=\"text\" id=\"article-title\" value=\"");t.b(t.v(t.f("title",c,p,0)));t.b("\">");t.b("\n" + i);t.b("        </div>");t.b("\n" + i);t.b("        <div class=\"form-item\">");t.b("\n" + i);t.b("            <label for=\"article-date\">Date</label>");t.b("\n" + i);t.b("            <input type=\"date\" id=\"article-date\" value=\"");t.b(t.v(t.f("date",c,p,0)));t.b("\">");t.b("\n" + i);t.b("        </div>        ");t.b("\n" + i);t.b("    </form>");t.b("\n" + i);t.b("</div>");t.b("\n" + i);t.b("<div class=\"editor-container\">");t.b("\n" + i);t.b("    <div id=\"toolbar\">");t.b("\n");t.b("\n" + i);t.b("    </div>");t.b("\n" + i);t.b("    <div id=\"editor\">");t.b("\n" + i);t.b("        ");t.b("\n" + i);t.b("    </div>");t.b("\n" + i);t.b("</div>");t.b("\n" + i);t.b("<div class=\"editor-actions\">");t.b("\n" + i);t.b("    <form action=\"\" class=\"form\">");t.b("\n" + i);t.b("        <div class=\"form-item\">");t.b("\n" + i);t.b("            <input type=\"checkbox\" id=\"published\" value=\"\">");t.b("\n" + i);t.b("            <label for=\"published\">Published</label>");t.b("\n" + i);t.b("        </div>");t.b("\n" + i);t.b("        <br>");t.b("\n" + i);t.b("        <button type=\"button\" id=\"save\">Save</button>");t.b("\n" + i);t.b("        <button type=\"button\" id=\"back\">Back</button>");t.b("\n" + i);t.b("    </form>");t.b("\n" + i);t.b("</div>");return t.fl(); },partials: {}, subs: {  }}, "<div class=\"article-meta-data\">\n    <form class=\"form\">\n        <div class=\"form-item\">\n            <label for=\"article-title\">Title</label>\n            <input type=\"text\" id=\"article-title\" value=\"{{title}}\">\n        </div>\n        <div class=\"form-item\">\n            <label for=\"article-date\">Date</label>\n            <input type=\"date\" id=\"article-date\" value=\"{{date}}\">\n        </div>        \n    </form>\n</div>\n<div class=\"editor-container\">\n    <div id=\"toolbar\">\n\n    </div>\n    <div id=\"editor\">\n        \n    </div>\n</div>\n<div class=\"editor-actions\">\n    <form action=\"\" class=\"form\">\n        <div class=\"form-item\">\n            <input type=\"checkbox\" id=\"published\" value=\"\">\n            <label for=\"published\">Published</label>\n        </div>\n        <br>\n        <button type=\"button\" id=\"save\">Save</button>\n        <button type=\"button\" id=\"back\">Back</button>\n    </form>\n</div>", H);return T.render.apply(T, arguments); };
 
 /***/ },
 /* 49 */

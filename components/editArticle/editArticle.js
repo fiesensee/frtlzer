@@ -67,7 +67,7 @@ class editArticle extends Component {
                 articles.articles[articleIndex].published = this.articleData.published;
                 fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/configs/articles.json", JSON.stringify(articles), (err) => {
                     fs.writeFile(this.articlePath, JSON.stringify(this.articleData), (err) => {
-                        renderAllAndPush().then(() => {
+                        renderAllAndPush("edit article " + articles.articles[articleIndex].title).then(() => {
                             this.appInstance.renderComponent("componentOverview");
                         })
                     })

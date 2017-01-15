@@ -19,7 +19,7 @@ export function addBlogEntry(blogEntry){
             fs.writeFile(app.getPath("documents") + "/frtlzer/wfs/src/components/" + blogEntry.componentName + "/" + blogEntry.componentName + ".json", JSON.stringify(newBlogData), (err) => {
                 console.log(err);
                 generateBlogFiles(blogEntry.componentName, newBlogData).then(() => {
-                    renderAllAndPush().then(resolve());
+                    renderAllAndPush("adding blog entry " + blogEntry.componentName).then(resolve());
                 });
             });
         })
@@ -77,9 +77,34 @@ function setPath(newRoute, routes, level){
 }
 
 export function getComponentName(componentLink){
-    let linkParts = componentLink.split(".");
-    for(var i = 0; i < linkParts.length; i++){
-        linkParts[i] = linkParts[i].charAt(0).toUpperCase() + linkParts[i].slice(1);
+    return replaceAndCamelCase(replaceAndCamelCase(componentLink, "/"), "-");
+}
+
+export function getComponentRoute(componentLink){
+    return componentLink.replace(/\//g, ".");
+}
+
+function replaceAndCamelCase(text, token){
+    let textParts = text.split(token);
+    for(var i = 0; i < textParts.length; i++){
+        textParts[i] = textParts[i].charAt(0).toUpperCase() + textParts[i].slice(1)
     }
-    return linkParts.join("");
+    return textParts.join("");
+}
+
+export function deleteRoute(component){
+    let linkParts = component.componentLink.split(".");
+    let routeIndices = [];
+    let routes = fs.readFileSync(app.getPath("documents") + "/frtlzer/wfs/configs/routes.json", 'utf-8');
+    // for(var i = 0; i < linkParts.length; i++){
+    //     let routeIndex = routes.findIndex((route) => {
+    //         return route.name === linkParts[i];
+    //     })
+    //     routeIndices.push(routeIndex);
+    // let routePart = routes[routeIndices[0]];
+    // for(var i = 0; i < routeIndices.length; i++){
+    //     for(var j = 0; i < linkParts.length; j++){
+
+    //     }
+    // }
 }
